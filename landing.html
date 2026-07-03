@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوکو - پلتفرم آموزشی</title>
+  <style>
+    @font-face { font-family: 'Shoor'; src: url('fonts/Shoor-Regular.ttf'); font-weight: 400; }
+    @font-face { font-family: 'Shoor'; src: url('fonts/Shoor-Medium.ttf'); font-weight: 500; }
+    @font-face { font-family: 'Shoor'; src: url('fonts/Shoor-ExtraBold.ttf'); font-weight: 700; }
+    @font-face { font-family: 'Shoor'; src: url('fonts/Shoor-Black.ttf'); font-weight: 800; }
+    @font-face { font-family: 'ShoorRounded'; src: url('fonts/ShoorRounded-Regular.ttf'); font-weight: 400; }
+    @font-face { font-family: 'ShoorRounded'; src: url('fonts/ShoorRounded-Medium.ttf'); font-weight: 500; }
+    @font-face { font-family: 'ShoorRounded'; src: url('fonts/ShoorRounded-ExtraBold.ttf'); font-weight: 700; }
+    @font-face { font-family: 'ShoorRounded'; src: url('fonts/ShoorRounded-Black.ttf'); font-weight: 800; }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'ShoorRounded', 'Shoor', system-ui, sans-serif;
+      direction: rtl;
+      background: white;
+      color: #1a2c3e;
+      min-height: 100vh;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    @keyframes gentlePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes menuSlideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== HEADER ===== */
+    #luko-header {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: calc(100% - 2rem);
+      max-width: 1063px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 1rem;
+      border: 1px solid transparent;
+      background: white;
+      padding: 0.6rem 1.5rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #luko-header.scrolled {
+      border-color: rgba(242, 99, 7, 0.2);
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .header-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      gap: 1rem;
+    }
+    .header-left { display: flex; align-items: center; gap: 1.5rem; flex: 1; min-width: 0; }
+    .logo-wrap { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; flex-shrink: 0; }
+    .logo-wrap img { height: 55px; width: auto; }
+    .mobile-logo-text { display: none; font-size: 1.2rem; font-weight: 800; color: #F26307; }
+
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-item {
+      position: relative;
+      cursor: pointer;
+      color: #1a2c3e;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding-bottom: 4px;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+    .nav-item.active { color: #F26307; }
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; right: 0;
+      width: 0; height: 2px;
+      background: #F26307;
+      border-radius: 2px;
+      transition: width 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .nav-item:hover::after, .nav-item.active::after { width: 100%; }
+    .nav-item:hover { color: #F26307; }
+
+    .header-right { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+    .btn-contact {
+      background: #F26307; color: white;
+      padding: 0.5rem 1.4rem;
+      border-radius: 32px; border: none;
+      cursor: pointer; font-size: 0.85rem; font-weight: 700;
+      font-family: inherit; white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(242,99,7,0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-contact:hover { background: #d45404; transform: translateY(-1px); }
+
+    .hamburger {
+      display: none;
+      flex-direction: column; gap: 5px;
+      align-items: center; justify-content: center;
+      width: 36px; height: 36px;
+      background: none; border: none; cursor: pointer;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: #1a2c3e; border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      border-top: 1px solid rgba(242, 99, 7, 0.12);
+      margin-top: 0.5rem;
+      padding: 0.5rem 0 0.75rem;
+      animation: menuSlideDown 0.2s ease-out both;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu-item {
+      padding: 0.65rem 0; font-size: 0.95rem; font-weight: 600;
+      color: #1a2c3e; cursor: pointer;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: color 0.2s;
+    }
+    .mobile-menu-item:last-of-type { border-bottom: none; }
+    .mobile-menu-item:hover { color: #F26307; }
+    .mobile-contact-btn {
+      margin-top: 0.5rem; background: #F26307; color: white;
+      padding: 0.6rem 1rem; border-radius: 10px;
+      text-align: center; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    }
+
+    /* ===== MAIN ===== */
+    main { padding-top: 100px; }
+    .container { max-width: 1063px; margin: 0 auto; padding: 0 1rem; }
+
+    /* ===== HERO ===== */
+    #hero {
+      padding: 2rem 0;
+      min-height: 60vh;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center;
+    }
+    .hero-title { font-size: 3rem; font-weight: 800; letter-spacing: -0.02em; color: #1a2c3e; margin-bottom: 0.5rem; }
+    .hero-title span { color: #F26307; }
+    .hero-sub { font-size: 1.3rem; font-weight: 500; color: #2c4b66; margin: 0.5rem 0 1rem; }
+    .highlight-glass {
+      background: rgba(242, 99, 7, 0.2);
+      backdrop-filter: blur(4px);
+      padding: 0.1rem 0.5rem; border-radius: 8px; display: inline-block;
+    }
+    .hero-typing {
+      font-size: 1.2rem; color: #466381;
+      min-height: 60px; display: flex;
+      align-items: center; justify-content: center;
+      gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+    }
+    .typing-word { color: #F26307; font-weight: 700; min-width: 180px; text-align: right; }
+    .cursor {
+      display: inline-block; width: 3px; height: 1.2em;
+      background: #F26307; animation: blink 1s infinite;
+      vertical-align: middle; margin-right: 2px;
+    }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem; }
+    .btn-primary {
+      background: #F26307; color: white;
+      padding: 0.7rem 2rem; border-radius: 12px; border: none;
+      cursor: pointer; font-size: 1rem; font-weight: 700;
+      font-family: inherit;
+      box-shadow: 0 4px 12px rgba(242,99,7,0.3);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover { background: #d45404; transform: translateY(-2px); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(10px);
+      color: #1a2c3e; padding: 0.7rem 2rem; border-radius: 12px;
+      border: 1.5px solid rgba(242,99,7,0.5);
+      cursor: pointer; font-size: 1rem; font-weight: 700;
+      font-family: inherit; transition: all 0.3s ease;
+    }
+    .btn-secondary:hover { background: white; border-color: #F26307; transform: translateY(-2px); }
+
+    /* ===== FEATURES TABS ===== */
+    #features { padding: 2rem 0; }
+    .features-wrap { padding: 3rem 2rem; max-width: 1200px; margin: 0 auto; }
+
+    .tabs-bar {
+      display: flex; flex-wrap: nowrap; justify-content: space-between;
+      align-items: center; gap: 0.25rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 0.5rem;
+      overflow-x: auto;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      position: relative; padding: 0.6rem 1rem;
+      font-size: 0.8rem; font-weight: 600; color: #4a5568;
+      background: transparent; border: none; cursor: pointer;
+      font-family: inherit; white-space: nowrap; flex-shrink: 0;
+      transition: color 0.3s;
+    }
+    .tab-btn.active { color: #F26307; }
+    .tab-btn .progress-track {
+      position: absolute; bottom: -9px; right: 0;
+      width: 100%; height: 3px;
+      background: rgba(242,99,7,0.2);
+      border-radius: 2px;
+      display: none;
+    }
+    .tab-btn.active .progress-track { display: block; }
+    .tab-btn .progress-fill {
+      position: absolute; bottom: -9px; right: 0;
+      width: 0%; height: 3px;
+      background: #F26307; border-radius: 2px;
+      transition: none;
+    }
+    .tab-btn.active .progress-fill { display: block; }
+
+    .tab-content {
+      display: flex; align-items: center; gap: 1.5rem; flex-direction: row;
+    }
+    .tab-img-wrap { flex: 1; display: flex; justify-content: center; align-items: center; }
+    .tab-img-wrap img { width: 250px; max-width: 100%; border-radius: 20px; }
+    .tab-info { flex: 1; }
+    .tab-icon-box {
+      width: 56px; height: 56px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .tab-icon-box svg { width: 30px; height: 30px; }
+    .tab-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.8rem; min-height: 3rem; }
+    .tab-title .loko { color: #1a2c3e; }
+    .tab-desc { font-size: 0.9rem; color: #5a6e7c; line-height: 1.6; margin-bottom: 1.2rem; transition: opacity 0.4s, transform 0.4s; }
+    .tab-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .tab-list-item {
+      display: flex; align-items: center; gap: 0.7rem;
+      font-size: 0.85rem; color: #4a627a;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .check-icon { color: #F26307; flex-shrink: 0; font-size: 1rem; }
+
+    /* ===== PRICING ===== */
+    #pricing {
+      width: 100%; border-radius: 80px;
+      background: rgb(250, 248, 255);
+      padding: 4rem 1rem 2rem;
+      margin: 2rem 0; scroll-margin-top: 200px;
+      overflow: hidden;
+    }
+    .pricing-header { text-align: center; margin-bottom: 0.5rem; }
+    .pricing-header h2 { font-size: 2rem; font-weight: 700; line-height: 1.4; }
+    .pricing-pulse { color: #F26307; display: inline-block; animation: gentlePulse 3s ease-in-out infinite; }
+    .pricing-sub { font-size: 0.9rem; color: #466381; margin-top: 0.5rem; }
+    .pricing-typing-wrap {
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .pricing-typing {
+      font-size: 1rem; font-weight: 600; color: rgb(76,77,114);
+      min-width: 260px; text-align: right; margin-right: 0.8rem;
+    }
+    .cursor2 {
+      display: inline-block; width: 2px; height: 1.2rem;
+      background: #F26307; animation: blink 0.8s step-end infinite;
+      vertical-align: middle; margin-right: 2px;
+    }
+    .pricing-cards {
+      display: flex; justify-content: center; align-items: stretch;
+      gap: 1.5rem; flex-wrap: wrap; max-width: 800px; margin: 0 auto;
+    }
+    .pricing-card {
+      flex: 1; min-width: 260px; max-width: 340px;
+      background: white; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      transition: all 0.3s ease; position: relative;
+      animation: scaleIn 0.5s ease-out both;
+    }
+    .pricing-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+    .pricing-card-header { padding: 1rem; text-align: center; }
+    .pricing-card-header h3 { font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.25rem; }
+    .pricing-card-header p { font-size: 0.7rem; color: rgba(255,255,255,0.8); }
+    .pricing-card-price { text-align: center; padding: 1rem; border-bottom: 1px solid #f0f0f0; }
+    .pricing-card-price span { font-size: 1.5rem; font-weight: 800; color: #F26307; }
+    .pricing-card-price p { font-size: 0.65rem; color: #5a6e7c; margin-top: 0.25rem; }
+    .pricing-card-features { padding: 0.8rem 1rem; }
+    .pricing-feature { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; font-size: 0.7rem; color: #4a627a; }
+    .pricing-card-btn-wrap { padding: 0 1rem 1rem; }
+    .pricing-badge {
+      position: absolute; top: 8px; right: 8px;
+      background: #F26307; color: white; font-size: 0.6rem; font-weight: 700;
+      padding: 0.2rem 0.6rem; border-radius: 20px; z-index: 1;
+    }
+    .btn-outline-orange {
+      width: 100%; background: transparent; color: #F26307;
+      padding: 0.5rem; border-radius: 30px; border: 1.5px solid #F26307;
+      cursor: pointer; font-size: 0.75rem; font-weight: 600;
+      font-family: inherit; transition: all 0.3s ease;
+    }
+    .btn-outline-orange:hover { background: #F26307; color: white; }
+    .btn-fill-orange {
+      width: 100%; background: #F26307; color: white;
+      padding: 0.5rem; border-radius: 30px; border: none;
+      cursor: pointer; font-size: 0.75rem; font-weight: 600;
+      font-family: inherit; transition: all 0.3s ease;
+    }
+    .btn-fill-orange:hover { background: #d45404; }
+    .pricing-note { text-align: center; margin-top: 1.5rem; font-size: 0.7rem; color: #4a4d72; font-weight: 500; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      position: relative;
+      background: #1a2c3e; border-radius: 16px;
+      margin: 2rem 0 1rem; padding: 1.5rem;
+      direction: rtl;
+    }
+    .footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; }
+    .footer-about { flex: 2; min-width: 200px; }
+    .footer-about h3 { font-size: 1rem; font-weight: 600; color: white; margin-bottom: 0.8rem; }
+    .footer-about p { font-size: 0.75rem; color: rgba(255,255,255,0.7); line-height: 1.6; }
+    .footer-links { flex: 1; min-width: 120px; }
+    .footer-links h3 { font-size: 1rem; font-weight: 600; color: white; margin-bottom: 0.8rem; }
+    .footer-links ul { list-style: none; }
+    .footer-links li { margin-bottom: 0.5rem; }
+    .footer-links a {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.75rem; color: rgba(255,255,255,0.7); text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: #F26307; }
+    .footer-links .dot { width: 5px; height: 5px; background: #F26307; border-radius: 50%; display: inline-block; }
+    .footer-contact { flex: 1.5; min-width: 180px; }
+    .footer-contact h3 { font-size: 1rem; font-weight: 600; color: white; margin-bottom: 0.8rem; }
+    .footer-contact-items { display: flex; flex-direction: column; gap: 0.8rem; }
+    .footer-label { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-bottom: 0.2rem; }
+    .footer-phone { font-size: 0.85rem; font-weight: 600; color: #F26307; text-decoration: none; direction: ltr; display: inline-block; }
+    .social-links { display: flex; gap: 0.5rem; }
+    .social-link {
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; background: rgba(255,255,255,0.1);
+      border-radius: 8px; transition: all 0.3s;
+    }
+    .social-link:hover { background: #F26307; transform: translateY(-2px); }
+    .footer-handle { font-size: 0.8rem; font-weight: 500; color: #F26307; direction: ltr; }
+    .footer-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 0.8rem;
+      margin-top: 1.5rem; padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .footer-copy { display: flex; align-items: center; gap: 0.4rem; font-size: 0.65rem; color: rgba(255,255,255,0.6); }
+    .footer-copy span { color: #F26307; }
+    .footer-made { font-size: 0.6rem; color: rgba(255,255,255,0.5); direction: ltr; }
+    .footer-deco {
+      position: absolute; top: -10px; right: -10px;
+      width: 25%; height: 80px; background: #F26307;
+      border-radius: 12px; z-index: -1; opacity: 0.25;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      nav { display: none; }
+      .logo-wrap img { height: 42px !important; }
+      .hamburger { display: flex; }
+      .mobile-logo-text { display: inline; }
+      .btn-contact { display: none !important; }
+      .hero-title { font-size: 1.5rem; }
+      .hero-sub { font-size: 1rem; }
+      .hero-typing { font-size: 1rem; }
+      #pricing { border-radius: 32px; }
+      .pricing-card { min-width: 100%; max-width: 100%; }
+      .footer-grid { flex-direction: column; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .features-wrap { padding: 2rem 1rem; }
+      .tab-content { flex-direction: column; }
+      .tabs-bar { display: none; }
+    }
+    @media (min-width: 601px) and (max-width: 768px) {
+      .hero-title { font-size: 2rem; }
+      .hero-sub { font-size: 1rem; }
+    }
+
+    /* scroll reveal */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1), transform 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* mobile dots */
+    .mobile-dots { display: none; justify-content: center; align-items: center; gap: 0.4rem; margin-bottom: 2rem; padding: 0.5rem 0; }
+    @media (max-width: 600px) { .mobile-dots { display: flex; } }
+    .dot-btn {
+      width: 8px; height: 8px; border-radius: 8px;
+      border: none; background: #d1d5db; cursor: pointer;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s ease;
+      padding: 0; flex-shrink: 0;
+    }
+    .dot-btn.active {
+      background: #F26307;
+      width: 28px;
+      box-shadow: 0 2px 8px rgba(242,99,7,0.35);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<div id="luko-header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo-wrap" onclick="scrollToSection('hero')">
+        <span class="mobile-logo-text">لوکو</span>
+        <img src="logo.png" alt="لوگو لوکو" />
+      </div>
+      <nav id="main-nav">
+        <span class="nav-item active" data-section="features" onclick="scrollToSection('features')">امکانات</span>
+        <span class="nav-item" data-section="pricing" onclick="scrollToSection('pricing')">قیمت‌گذاری</span>
+      </nav>
+    </div>
+    <div class="header-right">
+      <button class="btn-contact" onclick="alert('تماس بگیرید')">تماس بگیرید</button>
+      <button class="hamburger" id="hamburger" aria-label="منو" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-item" onclick="scrollToSection('features'); closeMenu()">امکانات</div>
+    <div class="mobile-menu-item" onclick="scrollToSection('pricing'); closeMenu()">قیمت‌گذاری</div>
+    <div class="mobile-contact-btn" onclick="alert('تماس بگیرید'); closeMenu()">تماس بگیرید</div>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<main>
+  <div class="container">
+
+    <!-- HERO -->
+    <section id="hero">
+      <h1 class="hero-title">پلتفرم آموزشی <span>لوکو</span></h1>
+      <p class="hero-sub">
+        مدرسه‌ای که برای هر دانش‌آموز یک مسیر دارد،
+        <span class="highlight-glass">نه یک کتاب</span>
+      </p>
+      <div class="hero-typing">
+        <span>یادگیری با روش‌های نوین</span>
+        <span class="typing-word">
+          <span id="hero-typed"></span><span class="cursor"></span>
+        </span>
+      </div>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="alert('درخواست دموی زنده')">درخواست دموی زنده</button>
+        <button class="btn-secondary" onclick="alert('شروع رایگان')">رایگان شروع کنید</button>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="reveal">
+      <div class="features-wrap">
+
+        <!-- mobile dots -->
+
+        <!-- desktop tabs bar -->
+        <div class="tabs-bar" id="tabs-bar"></div>
+
+        <!-- tab content -->
+        <div class="tab-content" id="tab-content"></div>
+        <div class="mobile-dots" id="mobile-dots"></div>
+
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="reveal">
+      <div class="pricing-header">
+        <h2>
+          قیمت گذاری
+          <span class="pricing-pulse">ساده</span>
+          و
+          <span class="pricing-pulse">اقتصادی</span>
+          <span>لوکو</span>
+        </h2>
+        <p class="pricing-sub">یک ماه استفاده رایگان و بدون پرداخت هزینه از لوکو استفاده کنید</p>
+      </div>
+      <div class="pricing-typing-wrap">
+        <p class="pricing-typing" id="pricing-typed"><span class="cursor2"></span></p>
+      </div>
+      <div class="pricing-cards">
+        <!-- ماهانه -->
+        <div class="pricing-card" style="animation-delay:0.2s">
+          <div class="pricing-card-header" style="background: linear-gradient(135deg, #F26307, #F26307)">
+            <h3>پلن ماهانه</h3>
+            <p>انعطاف‌پذیر و مقرون به صرفه</p>
+          </div>
+          <div class="pricing-card-price">
+            <span>تماس بگیرید</span>
+            <p>قیمت بر اساس تعداد دانش‌آموزان</p>
+          </div>
+          <div class="pricing-card-features">
+            <div class="pricing-feature"><span class="check-icon">✓</span> ساپورت کامل سال تحصیلی</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> پوشش تمام دانش‌آموزان مدرسه</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> دسترسی کامل معلمین به ابزارها</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> بهره‌مندی از تمامی قابلیت‌ها</div>
+          </div>
+          <div class="pricing-card-btn-wrap">
+            <button class="btn-outline-orange" onclick="alert('خرید پکیج ماهانه')">خرید پکیج</button>
+          </div>
+        </div>
+        <!-- سالانه -->
+        <div class="pricing-card" style="animation-delay:0.4s">
+          <div class="pricing-badge">پرطرفدارترین</div>
+          <div class="pricing-card-header" style="background: linear-gradient(135deg, #F26307, #466381)">
+            <h3>پلن سالانه</h3>
+            <p>اقتصادی‌ترین گزینه</p>
+          </div>
+          <div class="pricing-card-price">
+            <span>تماس بگیرید</span>
+            <p>به همراه ۲ ماه رایگان</p>
+          </div>
+          <div class="pricing-card-features">
+            <div class="pricing-feature"><span class="check-icon">✓</span> ساپورت کامل ۱۲ ماهه دانش‌آموزان</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> پوشش مدرسه و معلمین طی ۱ سال کامل</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> بهره‌مندی از تمامی امکانات حتی در تابستان</div>
+            <div class="pricing-feature"><span class="check-icon">✓</span> پشتیبانی اولویت‌دار ۲۴/۷</div>
+          </div>
+          <div class="pricing-card-btn-wrap">
+            <button class="btn-fill-orange" onclick="alert('خرید پکیج سالانه')">خرید پکیج</button>
+          </div>
+        </div>
+      </div>
+      <p class="pricing-note">قیمت‌ها بر اساس تعداد دانش‌آموزان محاسبه می‌شود | برای دریافت قیمت دقیق با ما تماس بگیرید</p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-deco"></div>
+      <div class="footer-grid">
+        <div class="footer-about">
+          <h3>درباره ما</h3>
+          <p>لوکو اولین پلتفرم شخصی‌ساز یادگیری در ایران است. مدرسه‌ای که برای هر دانش‌آموز یک مسیر دارد، نه یک کتاب.</p>
+        </div>
+        <div class="footer-links">
+          <h3>لینک های مفید</h3>
+          <ul>
+            <li><a href="#"><span class="dot"></span> قوانین مقررات</a></li>
+            <li><a href="#"><span class="dot"></span> پشتیبانی</a></li>
+            <li><a href="#"><span class="dot"></span> درباره ما</a></li>
+            <li><a href="#"><span class="dot"></span> تماس با ما</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h3>ارتباط با ما</h3>
+          <div class="footer-contact-items">
+            <div>
+              <p class="footer-label">شماره تماس</p>
+              <a href="tel:09028411956" class="footer-phone">۰۹۰۲ ۸۴۱ ۱۹۵۶</a>
+            </div>
+            <div>
+              <p class="footer-label">شبکه های اجتماعی</p>
+              <div class="social-links">
+                <a href="https://t.me/luko_ir" target="_blank" class="social-link">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M9.417 15.181l-.397 5.584c.568 0 .814-.244 1.109-.537l2.663-2.545 5.518 4.041c1.012.564 1.725.267 1.998-.931l3.622-16.972.001-.001c.321-1.496-.541-2.081-1.527-1.714l-21.29 8.151c-1.453.564-1.431 1.374-.247 1.741l5.443 1.693 12.643-7.911c.595-.394 1.136-.176.691.218z"/>
+                  </svg>
+                </a>
+                <a href="https://instagram.com/luko_ir" target="_blank" class="social-link">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 5.838c-3.403 0-6.158 2.758-6.158 6.158 0 3.403 2.758 6.158 6.158 6.158 3.403 0 6.158-2.758 6.158-6.158 0-3.403-2.758-6.158-6.158-6.158zm0 10.155c-2.209 0-3.997-1.789-3.997-3.997s1.789-3.997 3.997-3.997 3.997 1.789 3.997 3.997c.001 2.208-1.788 3.997-3.997 3.997zM16.948.076c-2.208-.103-7.677-.098-9.887 0-1.942.091-3.655.56-5.036 1.941-2.308 2.308-2.013 5.418-2.013 9.979 0 4.668-.26 7.706 2.013 9.979 2.317 2.316 5.472 2.013 9.979 2.013 4.624 0 6.22.003 7.855-.63 2.223-.863 3.901-2.85 4.065-6.419.104-2.209.098-7.677 0-9.887-.198-4.213-2.459-6.768-6.976-6.976zm3.495 20.372c-1.513 1.513-3.612 1.378-8.468 1.378-5 0-7.005.074-8.468-1.393-1.685-1.677-1.38-4.37-1.38-8.453 0-5.525-.567-9.504 4.978-9.788 1.274-.045 1.649-.06 4.856-.06l.045.03c5.329 0 9.51-.558 9.761 4.986.057 1.265.07 1.645.07 4.847-.001 4.942.093 6.959-1.394 8.453zM18.406 5.595a1.439 1.439 0 1 0 0-2.878 1.439 1.439 0 0 0 0 2.878z"/>
+                  </svg>
+                </a>
+                <a href="https://linkedin.com/company/luko" target="_blank" class="social-link">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="white">
+                    <path d="M23.994 24v-.001h.006v-8.802c0-4.306-.927-7.623-5.961-7.623-2.42 0-4.044 1.328-4.707 2.587h-.07v-2.185h-4.773v16.023h4.97v-7.934c0-2.089.396-4.109 2.983-4.109 2.549 0 2.587 2.384 2.587 4.243v7.801zM.396 7.977h4.976v16.023h-4.976zM2.882 0c-1.591 0-2.882 1.291-2.882 2.882s1.291 2.909 2.882 2.909 2.882-1.318 2.882-2.909c-.001-1.591-1.292-2.882-2.882-2.882z"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+            <div>
+              <p class="footer-label">آیدی ما در شبکه‌های اجتماعی</p>
+              <p class="footer-handle">@luko_ir</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copy">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 16 16" fill="none">
+            <path d="M7.9987 14.6668C4.3187 14.6668 1.33203 11.6802 1.33203 8.00016C1.33203 4.32016 4.3187 1.3335 7.9987 1.3335C11.6787 1.3335 14.6654 4.32016 14.6654 8.00016C14.6654 11.6802 11.6787 14.6668 7.9987 14.6668Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.91886 10.0002C9.44553 10.4135 8.83219 10.6668 8.15885 10.6668C6.68552 10.6668 5.49219 9.4735 5.49219 8.00016C5.49219 6.52683 6.68552 5.3335 8.15885 5.3335C8.83219 5.3335 9.44553 5.58683 9.91886 6.00016" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          کلیه حقوق مادی و معنوی سایت برای <span>لوکو</span> محفوظ است.
+        </div>
+        <p class="footer-made">ساخته شده با ❤️ توسط تیم لوکو</p>
+      </div>
+    </footer>
+
+  </div>
+</main>
+
+<script>
+// ===== DATA =====
+const tabs = [
+  {
+    name: 'لوکو تلویزیون',
+    iconColor: '#F26307',
+    iconBg: 'rgba(242,99,7,0.1)',
+    image: 'icon55.png',
+    description: 'بیش از ۱۰۰۰ ساعت محتوای آموزشی ویدیویی با کیفیت بالا، مناسب برای سبک‌های مختلف یادگیری',
+    list: ['دسترسی به کتابخانه ویدیویی غنی','ویدیوهای تعاملی با آزمون‌های لحظه‌ای','امکان دانلود و تماشای آفلاین','پخش زنده کلاس‌های ویژه اساتید برتر'],
+    iconSvg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>`
+  },
+  {
+    name: 'لوکو سلامت',
+    iconColor: '#466381',
+    iconBg: 'rgba(70,99,129,0.1)',
+    image: 'icon56.png',
+    description: 'مراقبت از سلامت روان و جسم دانش‌آموزان در کنار آموزش، برای رشد متوازن',
+    list: ['ارزیابی ماهانه وضعیت سلامت روان','تمرینات مدیتیشن و تمرکز','مشاوره آنلاین با متخصصین','برنامه‌های تحرک و ورزش روزانه'],
+    iconSvg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+  },
+  {
+    name: 'لوکو کلاب',
+    iconColor: '#F26307',
+    iconBg: 'rgba(242,99,7,0.1)',
+    image: 'icon60.png',
+    description: 'یادگیری از طریق بازی، مسابقات گروهی و چالش‌های مهیج هفتگی',
+    list: ['لیگ‌های هفتگی با جوایز ویژه','بازی‌های آموزشی هوشمند','رقابت با دانش‌آموزان سراسر کشور','گواهینامه مهارت برای برگزیدگان'],
+    iconSvg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5S14.67 12 15.5 12s1.5.67 1.5 1.5S16.33 15 15.5 15zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5S19.33 12 18.5 12z"/></svg>`
+  },
+  {
+    name: 'لوکو پادکست',
+    iconColor: '#466381',
+    iconBg: 'rgba(70,99,129,0.1)',
+    image: 'icon57.png',
+    description: 'آموزش در هر مکان و هر زمان با پادکست‌های حرفه‌ای و جذاب',
+    list: ['بیش از ۵۰۰ اپیزود پادکست آموزشی','امکان گوش دادن در حین انجام کارهای روزمره','مهمان‌های ویژه و اساتید برجسته','خلاصه کتاب‌های صوتی آموزشی'],
+    iconSvg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a4 4 0 0 1 4 4v5a4 4 0 0 1-8 0V7a4 4 0 0 1 4-4zm-1 14.93V20H9v2h6v-2h-2v-2.07A8 8 0 0 0 20 12h-2a6 6 0 0 1-12 0H4a8 8 0 0 0 7 7.93z"/></svg>`
+  },
+  {
+    name: 'لوکو داشبورد معاونین',
+    iconColor: '#466381',
+    iconBg: 'rgba(70,99,129,0.1)',
+    image: 'icon59.png',
+    description: 'داشبورد تحلیلی پیشرفته برای معاونین و مدیران مدرسه',
+    list: ['گزارش تحلیلی از عملکرد هر کلاس','پیش‌بینی نمرات نهایی دانش‌آموزان','مدیریت منابع و برنامه‌ریزی هوشمند','ارزیابی عملکرد معلمان'],
+    iconSvg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>`
+  },
+  {
+    name: 'لوکو داشبورد معلمین',
+    iconColor: '#F26307',
+    iconBg: 'rgba(242,99,7,0.1)',
+    image: 'icon58.png',
+    description: 'ابزارهای حرفه‌ای برای معلمان جهت کاهش کارهای تکراری و افزایش بازدهی',
+    list: ['تصحیح خودکار آزمون‌ها و تکالیف','طراحی تمرین هوشمند با کمک AI','داده‌های دقیق از وضعیت هر دانش‌آموز','کتابخانه الگوهای تدریس نوین'],
+    iconSvg: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>`
+  }
+];
+
+let activeTab = 0;
+let progressWidth = 0;
+let progressTimer = null;
+let autoTimer = null;
+let typingTimer = null;
+let isHovered = false;
+const DURATION = 5000;
+
+// ===== BUILD TABS =====
+function buildTabs() {
+  const bar = document.getElementById('tabs-bar');
+  const dots = document.getElementById('mobile-dots');
+  bar.innerHTML = '';
+  dots.innerHTML = '';
+
+  tabs.forEach((tab, i) => {
+    // desktop tab button
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+    btn.innerHTML = tab.name +
+      '<span class="progress-track"></span>' +
+      '<span class="progress-fill" id="pf-'+i+'"></span>';
+    btn.addEventListener('mouseenter', () => { isHovered = true; });
+    btn.addEventListener('mouseleave', () => { isHovered = false; });
+    btn.addEventListener('click', () => switchTab(i));
+    bar.appendChild(btn);
+
+    // mobile dot
+    const dot = document.createElement('button');
+    dot.className = 'dot-btn' + (i === 0 ? ' active' : '');
+    dot.id = 'dot-' + i;
+    dot.addEventListener('click', () => switchTab(i));
+    dots.appendChild(dot);
+  });
+}
+
+function renderTabContent(index, animate) {
+  const tab = tabs[index];
+  const content = document.getElementById('tab-content');
+
+  const listItems = tab.list.map((item, idx) => `
+    <div class="tab-list-item" style="transition-delay:${0.3 + idx * 0.1}s; opacity:${animate ? 0 : 1}; transform:${animate ? 'translateX(-15px)' : 'translateX(0)'}">
+      <span class="check-icon" style="color:${tab.iconColor}">✓</span>
+      <span>${item}</span>
+    </div>
+  `).join('');
+
+  content.innerHTML = `
+    <div class="tab-img-wrap">
+      <img src="${tab.image}" alt="${tab.name}" />
+    </div>
+    <div class="tab-info">
+      <div class="tab-icon-box" style="background:${tab.iconBg}; color:${tab.iconColor}">
+        ${tab.iconSvg}
+      </div>
+      <div class="tab-title">
+        <span class="loko">لوکو </span>
+        <span id="tab-typed" style="color:${tab.iconColor}"></span><span class="cursor" style="background:${tab.iconColor}" id="tab-cursor"></span>
+      </div>
+      <p class="tab-desc" id="tab-desc" style="opacity:0;transform:translateY(10px)">${tab.description}</p>
+      <div class="tab-list" id="tab-list">${listItems}</div>
+    </div>
+  `;
+
+  // start typing for tab title
+  const fullTitle = tab.name.replace('لوکو ', '');
+  let idx = 0;
+  if (typingTimer) clearInterval(typingTimer);
+  const typed = document.getElementById('tab-typed');
+  const cursor = document.getElementById('tab-cursor');
+  if (typed) typed.textContent = '';
+
+  typingTimer = setInterval(() => {
+    if (!typed) { clearInterval(typingTimer); return; }
+    if (idx <= fullTitle.length) {
+      typed.textContent = fullTitle.substring(0, idx);
+      idx++;
+    } else {
+      clearInterval(typingTimer);
+      if (cursor) cursor.style.display = 'none';
+      // show desc and list
+      const desc = document.getElementById('tab-desc');
+      if (desc) { desc.style.opacity = '1'; desc.style.transform = 'translateY(0)'; }
+      const listEls = document.querySelectorAll('.tab-list-item');
+      listEls.forEach((el, i) => {
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateX(0)';
+        }, 300 + i * 100);
+      });
+    }
+  }, 80);
+}
+
+function switchTab(index) {
+  if (index === activeTab) return;
+
+  // reset old tab's progress bar immediately
+  const oldPf = document.getElementById('pf-' + activeTab);
+  if (oldPf) oldPf.style.width = '0%';
+
+  activeTab = index;
+
+  // update tab buttons
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === index);
+  });
+  document.querySelectorAll('.dot-btn').forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+
+  progressWidth = 0;
+  updateProgress(0);
+  renderTabContent(index, true);
+  resetAutoTimer();
+}
+
+function updateProgress(w) {
+  const pf = document.getElementById('pf-' + activeTab);
+  if (pf) pf.style.width = w + '%';
+}
+
+function resetAutoTimer() {
+  if (progressTimer) clearInterval(progressTimer);
+  if (autoTimer) clearInterval(autoTimer);
+  progressWidth = 0;
+  updateProgress(0);
+
+  const startTime = Date.now();
+  progressTimer = setInterval(() => {
+    if (isHovered) return;
+    const elapsed = Date.now() - startTime;
+    progressWidth = Math.min((elapsed / DURATION) * 100, 100);
+    updateProgress(progressWidth);
+  }, 16);
+
+  autoTimer = setTimeout(() => {
+    const next = (activeTab + 1) % tabs.length;
+    switchTab(next);
+  }, DURATION);
+}
+
+// ===== HERO TYPING =====
+const heroWords = ['آموزش با بازی', 'آموزش با ویدیو', 'آموزش با صوت'];
+let heroWordIdx = 0, heroCharIdx = 0, heroDeleting = false;
+
+function heroType() {
+  const el = document.getElementById('hero-typed');
+  if (!el) return;
+  const word = heroWords[heroWordIdx];
+  if (!heroDeleting) {
+    el.textContent = word.substring(0, heroCharIdx + 1);
+    heroCharIdx++;
+    if (heroCharIdx === word.length) {
+      heroDeleting = true;
+      setTimeout(heroType, 2000);
+      return;
+    }
+  } else {
+    el.textContent = word.substring(0, heroCharIdx - 1);
+    heroCharIdx--;
+    if (heroCharIdx === 0) {
+      heroDeleting = false;
+      heroWordIdx = (heroWordIdx + 1) % heroWords.length;
+    }
+  }
+  setTimeout(heroType, heroDeleting ? 80 : 120);
+}
+
+// ===== PRICING TYPING =====
+const pricingFullText = '✓ مورد تایید معلمان مطرح کشور';
+let pTypingIdx = 0, pDeleting = false;
+
+function pricingType() {
+  const el = document.getElementById('pricing-typed');
+  if (!el) return;
+  if (!pDeleting) {
+    if (pTypingIdx < pricingFullText.length) {
+      el.innerHTML = pricingFullText.substring(0, pTypingIdx + 1) + '<span class="cursor2"></span>';
+      pTypingIdx++;
+    } else {
+      pDeleting = true;
+      setTimeout(pricingType, 1500);
+      return;
+    }
+  } else {
+    if (pTypingIdx > 0) {
+      el.innerHTML = pricingFullText.substring(0, pTypingIdx - 1) + '<span class="cursor2"></span>';
+      pTypingIdx--;
+    } else {
+      pDeleting = false;
+    }
+  }
+  setTimeout(pricingType, pDeleting ? 60 : 100);
+}
+
+// ===== SCROLL =====
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const ham = document.getElementById('hamburger');
+  menu.classList.toggle('open');
+  ham.classList.toggle('open');
+}
+
+function closeMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+// ===== HEADER SCROLL =====
+window.addEventListener('scroll', () => {
+  const header = document.getElementById('luko-header');
+  header.classList.toggle('scrolled', window.scrollY > 20);
+
+  // update active nav
+  ['features', 'pricing'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const navItem = document.querySelector(`.nav-item[data-section="${id}"]`);
+    if (navItem) navItem.classList.toggle('active', rect.top <= 200 && rect.bottom >= 200);
+  });
+});
+
+// ===== INTERSECTION OBSERVER =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// close menu on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#luko-header')) closeMenu();
+});
+
+// ===== INIT =====
+buildTabs();
+renderTabContent(0, false);
+resetAutoTimer();
+heroType();
+setTimeout(pricingType, 500);
+</script>
+</body>
+</html>
